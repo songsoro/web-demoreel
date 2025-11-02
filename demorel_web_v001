@@ -1,0 +1,166 @@
+import { useEffect, useState } from "react";
+
+// ---------- Film & Series Credits Data ---------
+const CREDITS = [
+  { id: "genv2", title: "Gen V Season 2", year: 2025, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/d/d2/Gen_V_season_2_poster.jpg" },
+  { id: "lilo", title: "Lilo & Stitch", year: 2025, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/5/56/Lilo_%26_Stitch_2025_Theatrical_Poster.jpg" },
+  { id: "capam", title: "Captain America: Brave New World", year: 2025, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/a/a4/Captain_America_Brave_New_World_poster.jpg" },
+  { id: "ballerina", title: "From the World of John Wick: Ballerina", year: 2025, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/f/f6/Ballerina_%282025_film%29_poster.jpg" },
+  { id: "here", title: "Here", year: 2024, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/4/43/Here_film_poster.jpg" },
+  { id: "halo2", title: "Halo Season 2", year: 2024, format: "Series", role: "Compositor", studio: "TBD", poster: "https://static.wikia.nocookie.net/halo/images/4/46/Halo_Season_2_Poster.jpg/revision/latest/scale-to-width-down/1000?cb=20231220183923" },
+  { id: "boys4", title: "The Boys Season 4", year: 2024, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/c/cc/The_Boys_Season_4.jpg" },
+  { id: "genv1", title: "Gen V Season 1", year: 2023, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/2/2b/Gen_V_season_1.jpg" },
+  { id: "acolyte", title: "The Acolyte", year: 2024, format: "Series", role: "Compositor", studio: "TBD", poster: "https://m.media-amazon.com/images/M/MV5BZmM3N2Y1YzItZjQxYS00NTljLTgyZTItMzFkY2YzMzdiZjAwXkEyXkFqcGc@._V1_.jpg" },
+  { id: "ahsoka", title: "Ahsoka Season 1", year: 2023, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/9/9c/Ahsoka_%282023_TV_series%29.jpg" },
+  { id: "heart", title: "Heart of Stone", year: 2023, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/4/4e/Heart_of_Stone_2023_film_poster.jpg" },
+  { id: "flash", title: "The Flash", year: 2023, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/e/ed/The_Flash_%28film%29_poster.jpg" },
+  { id: "stranger2", title: "Stranger Things Season 2", year: 2017, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/f/f7/Stranger_Things_season_2.jpg" },
+  { id: "snowpiercer", title: "Snowpiercer Season 1", year: 2020, format: "Series", role: "Compositor", studio: "TBD", poster: "https://resizing.flixster.com/IicmZAnfeAjEB67tgoPmUjqSZCg=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p16954802_b_v13_aa.jpg" },
+  { id: "rampage", title: "Rampage", year: 2018, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/4/4f/Rampage_teaser_poster.jpg" },
+  { id: "baywatch", title: "Baywatch", year: 2017, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/6/6e/Baywatch_film_poster.jpg" },
+  { id: "deathnote", title: "Death Note", year: 2017, format: "Film", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/5/5f/Death_Note_%282017_film%29.png" },
+  { id: "unfortunate2", title: "A Series Of Unfortunate Events Season 2", year: 2018, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/5/5f/A_Series_of_Unfortunate_Events_Season_2_Poster.jpg" },
+  { id: "titans2", title: "Titans Season 2", year: 2020, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/d/d1/Titans_season_2_poster.jpg" },
+  { id: "doompatrol2", title: "Doom Patrol Season 2", year: 2020, format: "Series", role: "Compositor", studio: "TBD", poster: "https://upload.wikimedia.org/wikipedia/en/b/b5/Doom_Patrol_season_2_poster.jpg" },
+];
+
+export default function Portfolio() {
+  const [filter, setFilter] = useState({ format: "All", year: "All" });
+
+  useEffect(() => {
+    let raf;
+    let lastY = window.scrollY;
+    const update = () => {
+      const y = window.scrollY;
+      const scrollDelta = y - lastY;
+      const v = Math.min(1, Math.abs(scrollDelta) / 8);
+      lastY = y;
+
+      const els = document.querySelectorAll('.ca-text');
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const cx = vw / 2;
+      const cy = vh / 2;
+
+      els.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const ex = rect.left + rect.width / 2;
+        const ey = rect.top + rect.height / 2;
+        const dx = (ex - cx) / cx;
+        const dy = (ey - cy) / cy;
+        const edge = Math.min(1, Math.sqrt(dx * dx + dy * dy));
+        const base = 0.06;
+        const amt = base + v * (0.6 + 1.0 * edge);
+        const rdx = (dx * 14 + dy * 4) * amt;
+        const bdx = (-dx * 14 - dy * 4) * amt;
+        const rdy = (dy * 10) * amt;
+        const bdy = (-dy * 10) * amt;
+        el.style.textShadow = `${rdx}px ${rdy}px 0 rgba(255,0,0,0.5), ${bdx}px ${bdy}px 0 rgba(0,200,255,0.5)`;
+        el.style.filter = `blur(${(0.3 * amt).toFixed(3)}px) contrast(${(1 + 0.12 * amt).toFixed(3)})`;
+        el.style.transform = `translate3d(${(dx * 6 * amt).toFixed(3)}px, ${(dy * 6 * amt).toFixed(3)}px, 0)`;
+      });
+      raf = requestAnimationFrame(update);
+    };
+    raf = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const years = Array.from(new Set(CREDITS.map(c => c.year))).sort((a, b) => b - a);
+  const filteredCredits = CREDITS.filter((item) => {
+    const formatMatch = filter.format === "All" || item.format === filter.format;
+    const yearMatch = filter.year === "All" || item.year === parseInt(String(filter.year));
+    return formatMatch && yearMatch;
+  });
+
+  const onImgError = (e) => {
+    const el = e.currentTarget;
+    el.style.display = 'none';
+    const parent = el.closest('.img-wrap');
+    if (parent) parent.classList.add('broken');
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0f0f10] text-zinc-100">
+      <style>{`
+        .ca-text{ position:relative; will-change: filter, text-shadow, transform; transition: text-shadow 120ms ease, filter 120ms ease, transform 120ms ease; }
+        .poster-img{ object-fit: cover; width: 100%; height: 100%; display:block; filter: saturate(0.95); transition: transform 0.3s ease; }
+        .poster-card:hover .poster-img{ transform: scale(1.05); }
+        .img-wrap.broken{ display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.5); font-size:12px; padding:8px; text-align:center; background:#111; }
+        select{ background:#1a1a1a; border:1px solid #333; color:white; padding:4px 8px; border-radius:6px; }
+      `}</style>
+
+      <header className="relative overflow-hidden border-b border-white/5">
+        <div className="mx-auto max-w-7xl px-6 py-20">
+          <p className="ca-text text-sm tracking-widest text-white/60">PORTFOLIO</p>
+          <h1 className="ca-text mt-2 text-5xl font-semibold tracking-tight">Sunho Song</h1>
+          <p className="ca-text mt-3 text-xl text-white/70">VFX Compositor</p>
+          <p className="ca-text mt-4 max-w-2xl text-white/60">Feature & episodic compositing. Vancouver-based. Nuke-heavy pipeline with a love for clean plates, elegant gizmos, and precise interactive light.</p>
+        </div>
+      </header>
+
+      <section id="credits" className="mx-auto max-w-7xl px-6 py-14">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h2 className="ca-text text-3xl font-semibold">Selected Credits</h2>
+          <div className="flex gap-3">
+            <select value={filter.format} onChange={(e)=>setFilter({...filter, format:e.target.value})}>
+              <option value="All">All Formats</option>
+              <option value="Film">Films</option>
+              <option value="Series">Series</option>
+            </select>
+            <select value={filter.year} onChange={(e)=>setFilter({...filter, year:e.target.value})}>
+              <option value="All">All Years</option>
+              {years.map(y => (<option key={y} value={y}>{y}</option>))}
+            </select>
+          </div>
+        </div>
+
+        <ul className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          {filteredCredits.map((item) => (
+            <li key={item.id}>
+              <div className="poster-card group relative block overflow-hidden rounded-2xl bg-white/5 ring-1 ring-white/10">
+                <div className="img-wrap aspect-[2/3] w-full bg-neutral-900">
+                  <img
+                    src={item.poster}
+                    alt={item.title}
+                    className="poster-img"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                    crossOrigin="anonymous"
+                    onError={onImgError}
+                  />
+                  <div className="hidden" aria-hidden>
+                    {item.title}
+                  </div>
+                </div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent opacity-80" />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 p-3 text-left">
+                  <p className="text-sm text-white/80">{item.year} · {item.format}</p>
+                  <p className="truncate font-medium">{item.title}</p>
+                  <p className="truncate text-sm text-white/70">{item.role} · {item.studio}</p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <footer className="border-t border-white/5 bg-[#0b0b0c]">
+        <div className="mx-auto max-w-7xl px-6 py-10">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="ca-text text-lg font-medium">Get in touch</p>
+              <p className="text-white/60">sunho.song@email.com · Vancouver, Canada</p>
+            </div>
+            <div className="flex gap-3 text-white/70">
+              <a className="underline-offset-4 hover:underline" href="#">IMDb</a>
+              <a className="underline-offset-4 hover:underline" href="#">LinkedIn</a>
+              <a className="underline-offset-4 hover:underline" href="#">ArtStation</a>
+              <a className="underline-offset-4 hover:underline" href="#">Instagram</a>
+            </div>
+          </div>
+          <p className="mt-6 text-xs text-white/40">© {new Date().getFullYear()} Sunho Song. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
